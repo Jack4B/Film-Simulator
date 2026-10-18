@@ -720,3 +720,4 @@ data class HomeScreenModel(
                 }
         }
     }
+}
