@@ -55,6 +55,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -166,6 +167,13 @@ data class HomeScreen(
         )
 
 
+        val multiImagePicker = rememberFilePickerLauncher(
+            type = when (uiState.defaultPickerType) {
+                DefaultPickerType.IMAGES -> PickerType.Image
+                DefaultPickerType.FILES -> PickerType.File(supportedImageExtensions.toList())
+            }, mode = PickerMode.Multiple(), onResult = vm::onImagesPickerResult
+        )
+
         val homeScreenState = HomeUiState(
             previewImage = uiState.previewImage,
             previewToken = uiState.previewToken,
@@ -209,17 +217,28 @@ data class HomeScreen(
             filmThumbnails = uiState.filmThumbnails
         )
 
-        AppScaffold(
-            onVisibilityClick = homeScreenState.onVisibilityClick,
-            onImageChooseClick = homeScreenState.onImageChooseClick,
-            onImageResetClick = homeScreenState.onImageResetClick,
-            onSettingsClick = homeScreenState.onSettingsClick,
-            onImageExportClick = homeScreenState.onImageExportClick,
-            snackbarHostState = snackbarHostState
+        androidx.compose.material3.Scaffold(
+            containerColor = androidx.compose.ui.graphics.Color(0xFF14241F),
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         ) { innerPadding ->
-            HomeContent(
-                state = homeScreenState,
-                modifier = Modifier.padding(innerPadding)
+            EditorLayout(
+                state = uiState.copy(
+                    onContrastChange = vm::adjustContrast,
+                    onShadowsChange = vm::adjustShadows,
+                    onHighlightsChange = vm::adjustHighlights,
+                    onSaturationChange = vm::adjustSaturation,
+                    onTemperatureChange = vm::adjustTemperature,
+                    onExposureChange = vm::adjustExposure,
+                    onGrainChange = vm::addGrain,
+                    onChromaticAberrationChange = vm::addChromaticAberration,
+                ),
+                actions = EditorActions(
+                    onImport = multiImagePicker::launch,
+                    onSettings = { navigator.push(SettingsScreen()) },
+                    onReset = vm::resetImage,
+                    vm = vm,
+                ),
+                modifier = Modifier.padding(innerPadding),
             )
         }
 
