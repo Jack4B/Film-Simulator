@@ -60,11 +60,11 @@ android {
     namespace = "io.github.yahiaangelo.filmsimulator.android"
     compileSdk = 37
     defaultConfig {
-        applicationId = "io.github.yahiaangelo.filmsimulator.android"
+        applicationId = "io.github.jack4b.filmsimulator"
         minSdk = 24
         targetSdk = 37
-        versionCode = 15
-        versionName = "0.6.3"
+        versionCode = 16
+        versionName = "1.0.0"
     }
     buildFeatures {
         compose = true
