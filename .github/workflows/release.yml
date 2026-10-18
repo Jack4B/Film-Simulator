@@ -2,7 +2,7 @@ name: Release APK
 
 on:
   push:
-    tags: [ 'v*' ]
+    branches: [ ui-redesign ]
   workflow_dispatch:
 
 permissions:
@@ -21,14 +21,16 @@ jobs:
       # signed release can be added later with a keystore in repo secrets.
       - run: ./gradlew :androidApp:assembleDebug
       - name: Rename APK
-        run: cp androidApp/build/outputs/apk/debug/*.apk FilmSimulator-${{ github.ref_name }}.apk
+        run: cp androidApp/build/outputs/apk/debug/*.apk FilmSimulator-v1.0.${{ github.run_number }}.apk
       - uses: actions/upload-artifact@v4
         with:
           name: FilmSimulator-apk
           path: FilmSimulator-*.apk
       - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v1.0.${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: Film Simulator v1.0.${{ github.run_number }}
           files: FilmSimulator-*.apk
           generate_release_notes: true
